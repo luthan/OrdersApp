@@ -8,9 +8,9 @@ namespace OrdersWeb
 {
     public class MyHub : Hub
     {
-        public void Hello()
+        public void Send(string userName, string message)
         {
-            Clients.All.hello();
+            Clients.All.AddChatMessage(userName, message);
         }
     }
 }

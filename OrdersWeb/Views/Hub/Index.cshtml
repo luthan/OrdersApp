@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>User: <input type="text" id="userName" /></p>
+<p><input type="text" id="message"/><button id="sendMessage">Send</button></p>
+<div id="conversation"></div>
+
+@section scripts{
+    <script src="~/Scripts/jquery.signalR-2.1.2.min.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script>
+        $(function () {
+            var chatHub = $.connection.myHub;
+            chatHub.client.addChatMessage = function (userName, message) {
+                if (userName != $("#userName").val()) {
+                    $("#conversation").prepend("<div hidden>" + userName + ": " + message + "</div>");
+                } else {
+                    $("#conversation").prepend("<div hidden style='color:green'>" + userName + ": " + message + "</div>");
+                }
+                $(":hidden").fadeIn();
+            };
+            $.connection.hub.start().done(function () {
+                $("#sendMessage").click(function () {
+                    if ($.trim($("#userName").val()) != "" && $.trim($("#message").val()) != "") {
+                        chatHub.server.send($("#userName").val(), $("#message").val());
+                        $("#message").val("");
+                    } else {
+                        alert("Need a user name or some message!");
+                    }
+                });
+            })
+        });
+    </script>
+}
+
