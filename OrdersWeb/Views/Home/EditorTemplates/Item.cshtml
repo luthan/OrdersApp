@@ -1,0 +1,22 @@
+﻿@model OrdersWeb.Models.Item
+
+<p>
+    @Html.LabelFor(x => x.CategoryId)
+@Html.EditorFor(x => x.CategoryId)
+</p>
+<p>
+    @Html.LabelFor(x => x.BillingCategory)
+    @Html.EditorFor(x => x.BillingCategory)
+</p>
+<p>
+    @Html.LabelFor(x => x.ItemDescription)
+    @Html.EditorFor(x => x.ItemDescription)
+</p>
+<p>
+    @Html.LabelFor(x => x.Quantity)
+    @Html.EditorFor(x => x.Quantity)
+</p>
+<p>
+    @Html.LabelFor(x => x.Price)
+    @Html.EditorFor(x => x.Price)
+</p>

@@ -3,9 +3,12 @@
     ViewBag.Title = "Home Page";
 }
 <h3>@ViewBag.Title</h3>
-
-@Html.EditorFor(model=>model.OrderNumber)
-@Html.EditorFor(model=>model.PoNumber)
-@Html.EditorFor(model=>model.OrderDate)
-@Html.EditorFor(model=>model.Vendor)
-@Html.EditorFor(model=>model.Items)
+@using (Html.BeginForm("Index", "Home", FormMethod.Post))
+{
+    @Html.EditorFor(model => model.OrderNumber)
+    @Html.EditorFor(model => model.PoNumber)
+    @Html.EditorFor(model => model.OrderDate)
+    @Html.EditorFor(model => model.Vendor)
+    <h3>Order Items</h3>
+    @Html.EditorFor(model => model.Items)
+}

@@ -11,14 +11,20 @@ namespace OrdersWeb.Models
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     
     public partial class Item
     {
         public int Id { get; set; }
+        [Required]
         public string ItemDescription { get; set; }
+        [Required]
         public int Quantity { get; set; }
+        [Required]
         public double Price { get; set; }
+        [Required]
         public int CategoryId { get; set; }
+        [Required]
         public string BillingCategory { get; set; }
         public int OrderId { get; set; }
 
