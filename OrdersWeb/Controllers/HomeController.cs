@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using OrdersWeb.Models;
 
 namespace OrdersWeb.Controllers
 {
@@ -10,7 +11,14 @@ namespace OrdersWeb.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            Order newOrder = new Order()
+            {
+                Items = new List<Item>(){
+                    new Item(){ItemDescription = "Test"},
+                    new Item(){ItemDescription = "Test2"}
+                }
+            };
+            return View(newOrder);
         }
 
         public ActionResult About()
