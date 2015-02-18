@@ -14,10 +14,10 @@ namespace OrdersWeb.Models
     
     public partial class Order
     {
-        public Order()
-        {
-            this.Items = new HashSet<Item>();
-        }
+        //public Order()
+        //{
+        //    this.Items = new HashSet<Item>();
+        //}
     
         public int Id { get; set; }
         public string OrderNumber { get; set; }
@@ -26,6 +26,6 @@ namespace OrdersWeb.Models
         public string Vendor { get; set; }
         public string Notes { get; set; }
     
-        public virtual ICollection<Item> Items { get; set; }
+        public IList<Item> Items { get; set; }
     }
 }

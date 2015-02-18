@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'E:\VisualStudioProjects\OrdersApp\OrdersWebsite\OrdersWeb\Models\DbContext.edmx'. 
+﻿// T4 code generation is enabled for model 'C:\Users\Paul\Source\Repos\OrdersApp\OrdersWeb\Models\DbContext.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.
