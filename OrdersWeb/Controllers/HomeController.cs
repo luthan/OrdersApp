@@ -14,8 +14,8 @@ namespace OrdersWeb.Controllers
             Order newOrder = new Order()
             {
                 Items = new List<Item>(){
-                    new Item(){ItemDescription = "Test"},
-                    new Item(){ItemDescription = "Test2"}
+                    new Item(){Id=1,ItemDescription = "Test"},
+                    new Item(){Id=2,ItemDescription = "Test2"}
                 }
             };
             return View(newOrder);
