@@ -26,6 +26,6 @@ namespace OrdersWeb.Models
         public string Vendor { get; set; }
         public string Notes { get; set; }
     
-        public List<Item> Items { get; set; }
+        public ICollection<Item> Items { get; set; }
     }
 }
