@@ -250,6 +250,7 @@
     <Content Include="Views\Order\Edit.cshtml" />
     <Content Include="Views\Order\Index.cshtml" />
     <Content Include="Views\Category\Test.cshtml" />
+    <Content Include="Views\Order\Item.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
