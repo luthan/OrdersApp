@@ -17,7 +17,7 @@ namespace OrdersWeb.Controllers
         // GET: Category
         public ActionResult Index()
         {
-            return View(db.Categories.ToList());
+            return View(db.Categories.OrderBy(m=>m.CategoryName).ToList());
         }
 
         // GET: Category/Details/5

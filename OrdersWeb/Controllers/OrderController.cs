@@ -46,7 +46,7 @@ namespace OrdersWeb.Controllers
         public ActionResult Create()
         {
 
-            ViewBag.CategoryId = new SelectList(db.Categories, "Id", "CategoryName");
+            ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x=>x.CategoryName), "Id", "CategoryName");
             return View(new Order()
             {
                 OrderDate = DateTime.Today,
@@ -68,7 +68,7 @@ namespace OrdersWeb.Controllers
             if (addRow != null) 
             {
                 order.Items.Add(new Item());
-                ViewBag.CategoryId = new SelectList(db.Categories, "Id", "CategoryName");
+                ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x=>x.CategoryName), "Id", "CategoryName");
                 return View(order);
             }
             else
@@ -101,7 +101,7 @@ namespace OrdersWeb.Controllers
 
             Order order = db.Orders.Include(i => i.Items).Where(i => i.Id == id).Single();
            
-            ViewBag.CategoryId = new SelectList(db.Categories, "Id", "CategoryName");
+            ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x=>x.CategoryName), "Id", "CategoryName");
 
             return View(order);
         }
