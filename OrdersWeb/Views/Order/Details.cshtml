@@ -5,54 +5,81 @@
 }
 
 <h2>Details</h2>
+<h4>Order</h4>
+<hr />
+<dlv class="dl-horizontal">
+    <dt>
+        @Html.DisplayNameFor(model => model.OrderNumber)
+    </dt>
 
-<div>
-    <h4>Order</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.OrderNumber)
-        </dt>
+    <dd>
+        @Html.DisplayFor(model => model.OrderNumber)
+    </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.OrderNumber)
+    <dt>
+        @Html.DisplayNameFor(model => model.PoNumber)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.PoNumber)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.OrderDate)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.OrderDate)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.Vendor)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.Vendor)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.Notes)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.Notes)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.Items)
+    </dt>
+    <dd>
+        <table class="table">
+            <tr><th>Category</th><th>Billing Category</th><th>Description</th><th>Quantity</th><th>Price</th></tr>
+            @foreach (var tmp in Model.Items)
+                {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(x => tmp.Category.CategoryName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(x => tmp.BillingCategory)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(x => tmp.ItemDescription)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(x => tmp.Quantity)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(x => tmp.Price)
+                    </td>
+                    </tr>
+            }
+                   
+            </table>
         </dd>
+    </dlv>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.PoNumber)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.PoNumber)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.OrderDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.OrderDate)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Vendor)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Vendor)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Notes)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Notes)
-        </dd>
-
-    </dl>
-</div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>

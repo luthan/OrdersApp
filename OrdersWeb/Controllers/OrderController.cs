@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using OrdersWeb.Models;
 
+
 namespace OrdersWeb.Controllers
 {
     public class OrderController : Controller
@@ -17,6 +18,12 @@ namespace OrdersWeb.Controllers
         // GET: Order
         public ActionResult Index()
         {
+            List<Order> allOrders = db.Orders.ToList();
+            foreach (var order in allOrders)
+            {
+                List<Item> items = db.Items.Where(m => m.OrderId == order.Id).ToList();
+                order.Items = items;
+            }
             return View(db.Orders.ToList());
         }
 
@@ -27,7 +34,7 @@ namespace OrdersWeb.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Order order = db.Orders.Find(id);
+            Order order = db.Orders.Include(i => i.Items).Where(i => i.Id == id).Single();
             if (order == null)
             {
                 return HttpNotFound();
@@ -38,15 +45,16 @@ namespace OrdersWeb.Controllers
         // GET: Order/Create
         public ActionResult Create()
         {
+
             ViewBag.CategoryId = new SelectList(db.Categories, "Id", "CategoryName");
             return View(new Order()
             {
                 OrderDate = DateTime.Today,
                 Items = new List<Item>()
-                {
-                    new Item(){}
-                }
-                
+            {
+                new Item(){}
+            }
+
             });
         }
 
@@ -54,14 +62,33 @@ namespace OrdersWeb.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        //[ValidateAntiForgeryToken]
-        public ActionResult Create(Order order)
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(Order order, string addRow)
         {
-            db.Orders.Add(order);
-            db.SaveChanges();
+            if (addRow != null) 
+            {
+                order.Items.Add(new Item());
+                ViewBag.CategoryId = new SelectList(db.Categories, "Id", "CategoryName");
+                return View(order);
+            }
+            else
+            {
+                if (ModelState.IsValid)
+                {
+                    db.Orders.Add(order);
+                    db.SaveChanges();
+                    return RedirectToAction("Create");
+                }
+                else
+                {
+                    return View(order);
+                }
+               
+            }
 
-            return RedirectToAction("Create");
+            
         }
+
 
         
         // GET: Order/Edit/5
@@ -72,11 +99,10 @@ namespace OrdersWeb.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var order = db.Orders.Find(id);
-            List<Item> items = db.Items.Where(s => s.OrderId == id).ToList();
-            order.Items = items;  
+            Order order = db.Orders.Include(i => i.Items).Where(i => i.Id == id).Single();
            
             ViewBag.CategoryId = new SelectList(db.Categories, "Id", "CategoryName");
+
             return View(order);
         }
 
@@ -87,8 +113,13 @@ namespace OrdersWeb.Controllers
         //[ValidateAntiForgeryToken]
         public ActionResult Edit(Order order)
         {
-            db.Orders.Add(order);
+            db.Entry(order).State = EntityState.Modified;
             db.SaveChanges();
+            foreach (var tmp in order.Items)
+            {
+                db.Entry(tmp).State = EntityState.Modified;
+                db.SaveChanges();
+            }
 
             return RedirectToAction("Create");
         }
@@ -111,14 +142,22 @@ namespace OrdersWeb.Controllers
         // POST: Order/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        
         public ActionResult DeleteConfirmed(int id)
         {
             Order order = db.Orders.Find(id);
+            List<Item> items = db.Items.Where(s => s.OrderId == id).ToList();
+            foreach (var tmp in items)
+            {
+                db.Items.Remove(tmp);
+                db.SaveChanges();
+            }
             db.Orders.Remove(order);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
 
+       
         protected override void Dispose(bool disposing)
         {
             if (disposing)

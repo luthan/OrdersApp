@@ -16,15 +16,15 @@ namespace OrdersWeb.Models
     public partial class Item
     {
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage="Required")]
         public string ItemDescription { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Required")]
         public int Quantity { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Required")]
         public double Price { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Required")]
         public int CategoryId { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Required")]
         public string BillingCategory { get; set; }
         public int OrderId { get; set; }
 

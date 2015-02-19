@@ -58,7 +58,7 @@
             </div>*@
             </div>
 
-            <div style="clearfix">
+            <div class="clearfix">
                 @*@Html.LabelFor(model => model.Notes, htmlAttributes: new { @class = "control-label col-md-2" })*@
                 <div style="width:100%">
                     @Html.TextAreaFor(model => model.Notes,  new { @class = "form-control textarea", placeholder="Notes", style="width:880px" } )
@@ -70,7 +70,8 @@
 
             <div>
                 <div>
-                    <br /><input type="submit" value="Create" class="btn btn-default" />
+                    <br /><input type="submit" name="action:Create" value="Create" class="btn btn-success" style="float:left;margin-right:10px" /><div id="addNewRow" class="btn btn-primary" style="float:left;margin-right:50px">Add New Item</div>
+                    
                 </div>
             </div>
         </div>
@@ -83,4 +84,20 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $("#addNewRow").click(function () {
+            var valid = true;
+            $("[data-val-required]").each(function () {
+                if ($.trim($(this).val()) == "") {
+                    valid = false;
+                }
+            });
+            if (valid != false) {
+                $('form').append("<input type='hidden' name='addRow' value='true' />");
+                
+            }
+            $('form').submit();
+        });
+       
+    </script>
 }
