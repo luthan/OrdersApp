@@ -34,6 +34,7 @@
           <Property Name="OrderDate" Type="datetime" Nullable="false" />
           <Property Name="Vendor" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Notes" Type="text" Nullable="false" />
+          <Property Name="UserName" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <Association Name="FK_Item_Category">
           <End Role="Category" Type="Self.Category" Multiplicity="1" />
@@ -109,6 +110,7 @@
           <Property Name="OrderDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Vendor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Items" Relationship="Self.FK_Item_Order" FromRole="Order" ToRole="Item" />
         </EntityType>
         <Association Name="FK_Item_Category">
@@ -184,6 +186,7 @@
                 <ScalarProperty Name="OrderDate" ColumnName="OrderDate" />
                 <ScalarProperty Name="Vendor" ColumnName="Vendor" />
                 <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="UserName" ColumnName="UserName"/>
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -5,7 +5,6 @@
 }
 
 <h2>Details</h2>
-<h4>Order</h4>
 <hr />
 <dlv class="dl-horizontal">
     <dt>
@@ -30,6 +29,14 @@
 
     <dd>
         @Html.DisplayFor(model => model.OrderDate)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.UserName)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.UserName)
     </dd>
 
     <dt>
@@ -80,6 +87,6 @@
     </dlv>
 
     <p>
-        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-        @Html.ActionLink("Back to List", "Index")
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
+        @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-info" })
     </p>

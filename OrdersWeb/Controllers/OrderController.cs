@@ -16,55 +16,44 @@ namespace OrdersWeb.Controllers
     {
         private OrderAppDatabaseContext db = new OrderAppDatabaseContext();
 
-        // GET: Order
-        
         public ActionResult Index()
         {
-            //List<Order> allOrders = db.Orders.Include(i => i.Items).ToList();
-            //foreach (var order in allOrders)
-            //{
-            //    List<Item> items = db.Items.Where(m => m.OrderId == order.Id).ToList();
-            //    order.Items = items;
-            //}
             return View(db.Orders.OrderByDescending(m => m.OrderDate).ThenByDescending(m=>m.Id).ToList());
         }
 
-        // GET: Order/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Order order = db.Orders.Include(i => i.Items).Where(i => i.Id == id).Single();
-            if (order == null)
-            {
-                return HttpNotFound();
-            }
-            return View(order);
-        }
+        
 
         // GET: Order/Create
-        public ActionResult Create()
+        public ActionResult Order(int? id, string addOrUpdate)
         {
-            //using (var context = new PrincipalContext(ContextType.Domain))
-            //{
-            //    var principal = UserPrincipal.FindByIdentity(context, User.Identity.Name);
-            //    var firstName = principal.GivenName;
-            //    var lastName = principal.Surname;
-            //    ViewBag.fullName = firstName + " " + lastName;
-            //}
-
             ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x=>x.CategoryName), "Id", "CategoryName");
-            return View(new Order()
+            if (addOrUpdate == "Add")
             {
-                OrderDate = DateTime.Today,
-                Items = new List<Item>()
-            {
-                new Item(){}
-            }
+                ViewBag.addOrUpdate = addOrUpdate;
+                ViewBag.Title = "Add Order";
+                return View(new Order()
+                {
+                    OrderDate = DateTime.Today,
+                    Items = new List<Item>()
+                    {
+                        new Item(){}
+                    }
+                });
 
-            });
+            } else if(addOrUpdate == "Edit")
+            {
+                ViewBag.addOrUpdate = addOrUpdate;
+                ViewBag.Title = "Edit Order";
+                Order order = db.Orders.Include(i => i.Items).Where(i => i.Id == id).Single();
+                return View(order);
+            }
+            else
+            {
+                ViewBag.Title = "Add Order";
+                return View(new Order() { OrderDate = DateTime.Today, Items = new List<Item>() { new Item() } });
+            }
+            
+            
         }
 
         // POST: Order/Create
@@ -72,9 +61,9 @@ namespace OrdersWeb.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Order order, string btnSubmit)
+        public ActionResult Order(Order order, string btnSubmit, string userName)
         {
-            if (btnSubmit == "addRow") 
+            if (btnSubmit == "addRowAdd") 
             {
                 foreach (var modelValue in ModelState.Values)
                 {
@@ -83,20 +72,67 @@ namespace OrdersWeb.Controllers
 
                 order.Items.Add(new Item());
                 ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x=>x.CategoryName), "Id", "CategoryName");
+                ViewBag.addOrUpdate = "Add";
+                ViewBag.Title = "Add Order";
+                return View(order);
+            }
+            else if (btnSubmit == "addRowEdit")
+            {
+                foreach (var modelValue in ModelState.Values)
+                {
+                    modelValue.Errors.Clear();
+                }
+
+                order.Items.Add(new Item() { OrderId = order.Id });
+                ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName), "Id", "CategoryName");
+                ViewBag.addOrUpdate = "Edit";
+                ViewBag.Title = "Edit Order";
                 return View(order);
             }
             else
             {
-                if (ModelState.IsValid)
+                if (btnSubmit == "Add")
                 {
-                    db.Orders.Add(order);
-                    db.SaveChanges();
-                    return RedirectToAction("Create");
+                    if (ModelState.IsValid)
+                    {
+                        order.UserName = userName;
+                        db.Orders.Add(order);
+                        db.SaveChanges();
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName), "Id", "CategoryName");
+                        ViewBag.Title = "Add Order";
+                        return View(order);
+                    }
+                    
+                }
+                else if (btnSubmit == "Edit")
+                {
+                    if (ModelState.IsValid)
+                    {
+                        db.Items.RemoveRange(db.Items.Where(m => m.OrderId == order.Id));
+                        db.SaveChanges();
+                        foreach (var tmp in order.Items)
+                        {
+                            db.Items.Add(tmp);
+                            db.SaveChanges();
+                        }
+                        db.Entry(order).State = EntityState.Modified;
+                        db.SaveChanges();
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName), "Id", "CategoryName");
+                        ViewBag.Title = "Add Order";
+                        return View(order);
+                    }
                 }
                 else
                 {
-                    ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x=>x.CategoryName), "Id", "CategoryName");
-                    return View(order);
+                    return View();
                 }
             }   
         }
@@ -111,30 +147,30 @@ namespace OrdersWeb.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            Order order = db.Orders.Include(i => i.Items).Where(i => i.Id == id).Single();
+            //Order order = db.Orders.Include(i => i.Items).Where(i => i.Id == id).Single();
            
-            ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x=>x.CategoryName), "Id", "CategoryName");
+            //ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x=>x.CategoryName), "Id", "CategoryName");
 
-            return View(order);
+            return RedirectToAction("Order", new { id = id, addOrUpdate = "Edit" });
         }
 
         // POST: Order/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        //[HttpPost]
         //[ValidateAntiForgeryToken]
-        public ActionResult Edit(Order order)
-        {
-            db.Entry(order).State = EntityState.Modified;
-            db.SaveChanges();
-            foreach (var tmp in order.Items)
-            {
-                db.Entry(tmp).State = EntityState.Modified;
-                db.SaveChanges();
-            }
+        //public ActionResult Edit(Order order)
+        //{
+        //    db.Entry(order).State = EntityState.Modified;
+        //    db.SaveChanges();
+        //    foreach (var tmp in order.Items)
+        //    {
+        //        db.Entry(tmp).State = EntityState.Modified;
+        //        db.SaveChanges();
+        //    }
 
-            return RedirectToAction("Create");
-        }
+        //    return RedirectToAction("Create");
+        //}
 
         // GET: Order/Delete/5
         public ActionResult Delete(int? id)
@@ -167,6 +203,21 @@ namespace OrdersWeb.Controllers
             db.Orders.Remove(order);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        // GET: Order/Details/5
+        public ActionResult Details(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Order order = db.Orders.Include(i => i.Items).Where(i => i.Id == id).Single();
+            if (order == null)
+            {
+                return HttpNotFound();
+            }
+            return View(order);
         }
 
        

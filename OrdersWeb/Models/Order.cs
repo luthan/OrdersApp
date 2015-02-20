@@ -30,6 +30,7 @@ namespace OrdersWeb.Models
         public string Vendor { get; set; }
         [Required(ErrorMessage = "Required")]
         public string Notes { get; set; }
+        public string UserName { get; set; }
     
         public ICollection<Item> Items { get; set; }
     }
