@@ -8,6 +8,12 @@
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
+    @using System.DirectoryServices.AccountManagement
+    @{
+        var context = new PrincipalContext(ContextType.Domain);
+        var principal = UserPrincipal.FindByIdentity(context, User.Identity.Name);
+    }
+
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -25,6 +31,13 @@
                     <li>@Html.ActionLink("View Orders", "Index", "Order")</li>
                     @*<li>@Html.ActionLink("Contact", "Contact", "Home")</li>*@
                 </ul>
+                <p class="nav navbar-text navbar-right">
+                    Hello, @principal.GivenName @principal.Surname!                    
+                </p>
+                <p>
+
+                </p>
+
             </div>
         </div>
     </div>

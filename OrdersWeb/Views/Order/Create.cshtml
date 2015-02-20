@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Create";
+    HtmlHelper.ClientValidationEnabled = false;
 }
 
 <h2>Create</h2>
@@ -69,10 +70,11 @@
 
 
             <div>
-                <div>
-                    <br /><input type="submit" name="action:Create" value="Create" class="btn btn-success" style="float:left;margin-right:10px" /><div id="addNewRow" class="btn btn-primary" style="float:left;margin-right:50px">Add New Item</div>
+                    <br />
+                <button type="submit" name="btnSubmit" value="Create" class="btn btn-success" style="float:left;margin-right:10px">Submit</button>
+                <button type="submit" name="btnSubmit" value="addRow" class="btn btn-primary" style="float:left;margin-right:50px">Add Row</button>
                     
-                </div>
+
             </div>
         </div>
     </div>
@@ -85,19 +87,19 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
     <script>
-        $("#addNewRow").click(function () {
-            var valid = true;
-            $("[data-val-required]").each(function () {
-                if ($.trim($(this).val()) == "") {
-                    valid = false;
-                }
-            });
-            if (valid != false) {
-                $('form').append("<input type='hidden' name='addRow' value='true' />");
+        //$("#addNewRow").click(function () {
+        //    var valid = true;
+        //    $("[data-val-required]").each(function () {
+        //        if ($.trim($(this).val()) == "") {
+        //            valid = false;
+        //        }
+        //    });
+        //    if (valid != false) {
+        //        $('form').append("<input type='hidden' name='addRow' value='true' />");
                 
-            }
-            $('form').submit();
-        });
+        //    }
+        //    $('form').submit();
+        //});
        
     </script>
 }

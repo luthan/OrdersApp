@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using OrdersWeb.Models;
+//using System.DirectoryServices.AccountManagement;
 
 
 namespace OrdersWeb.Controllers
@@ -16,15 +17,16 @@ namespace OrdersWeb.Controllers
         private OrderAppDatabaseContext db = new OrderAppDatabaseContext();
 
         // GET: Order
+        
         public ActionResult Index()
         {
-            List<Order> allOrders = db.Orders.ToList();
-            foreach (var order in allOrders)
-            {
-                List<Item> items = db.Items.Where(m => m.OrderId == order.Id).ToList();
-                order.Items = items;
-            }
-            return View(db.Orders.ToList());
+            //List<Order> allOrders = db.Orders.Include(i => i.Items).ToList();
+            //foreach (var order in allOrders)
+            //{
+            //    List<Item> items = db.Items.Where(m => m.OrderId == order.Id).ToList();
+            //    order.Items = items;
+            //}
+            return View(db.Orders.OrderByDescending(m => m.OrderDate).ThenByDescending(m=>m.Id).ToList());
         }
 
         // GET: Order/Details/5
@@ -45,6 +47,13 @@ namespace OrdersWeb.Controllers
         // GET: Order/Create
         public ActionResult Create()
         {
+            //using (var context = new PrincipalContext(ContextType.Domain))
+            //{
+            //    var principal = UserPrincipal.FindByIdentity(context, User.Identity.Name);
+            //    var firstName = principal.GivenName;
+            //    var lastName = principal.Surname;
+            //    ViewBag.fullName = firstName + " " + lastName;
+            //}
 
             ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x=>x.CategoryName), "Id", "CategoryName");
             return View(new Order()
@@ -63,10 +72,15 @@ namespace OrdersWeb.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Order order, string addRow)
+        public ActionResult Create(Order order, string btnSubmit)
         {
-            if (addRow != null) 
+            if (btnSubmit == "addRow") 
             {
+                foreach (var modelValue in ModelState.Values)
+                {
+                    modelValue.Errors.Clear();
+                }
+
                 order.Items.Add(new Item());
                 ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x=>x.CategoryName), "Id", "CategoryName");
                 return View(order);
@@ -81,12 +95,10 @@ namespace OrdersWeb.Controllers
                 }
                 else
                 {
+                    ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x=>x.CategoryName), "Id", "CategoryName");
                     return View(order);
                 }
-               
-            }
-
-            
+            }   
         }
 
 
