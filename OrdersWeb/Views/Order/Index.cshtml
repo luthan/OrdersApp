@@ -7,7 +7,7 @@
 <h2>Orders</h2>
 <hr />
 <p>
-    @Html.ActionLink("Create New", "Order", null, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Create New", "Add", null, new { @class = "btn btn-primary" })
 </p>
 <table class="table">
     <tr>
@@ -26,7 +26,7 @@
         <th>
             @Html.DisplayNameFor(model => model.Vendor)
         </th>
-        <th></th>
+        <th width="200"></th>
     </tr>
 
     @foreach (var item in Model)

@@ -21,62 +21,74 @@ namespace OrdersWeb.Controllers
             return View(db.Orders.OrderByDescending(m => m.OrderDate).ThenByDescending(m=>m.Id).ToList());
         }
 
-        
-
         // GET: Order/Create
-        public ActionResult Order(int? id, string addOrUpdate)
+        public ActionResult Add()
         {
-            ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x=>x.CategoryName), "Id", "CategoryName");
-            if (addOrUpdate == "Add")
-            {
-                ViewBag.addOrUpdate = addOrUpdate;
-                ViewBag.Title = "Add Order";
-                return View(new Order()
-                {
-                    OrderDate = DateTime.Today,
-                    Items = new List<Item>()
-                    {
-                        new Item(){}
-                    }
-                });
-
-            } else if(addOrUpdate == "Edit")
-            {
-                ViewBag.addOrUpdate = addOrUpdate;
-                ViewBag.Title = "Edit Order";
-                Order order = db.Orders.Include(i => i.Items).Where(i => i.Id == id).Single();
-                return View(order);
-            }
-            else
-            {
-                ViewBag.Title = "Add Order";
-                return View(new Order() { OrderDate = DateTime.Today, Items = new List<Item>() { new Item() } });
-            }
-            
-            
+            ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName), "Id", "CategoryName");
+            ViewBag.BillingCategoryId = new SelectList(db.BillingCategories.OrderBy(x => x.BillingCategoryName), "Id", "BillingCategoryName");
+            return View(new Order() { OrderDate = DateTime.Today, Items = new List<Item>() { new Item() } });
         }
 
-        // POST: Order/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        public ActionResult Edit(int? id)
+        {
+            Order order = db.Orders.Include(i => i.Items).Where(i => i.Id == id).Single();
+
+            ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName), "Id", "CategoryName");
+            ViewBag.BillingCategoryId = new SelectList(db.BillingCategories.OrderBy(x => x.BillingCategoryName), "Id", "BillingCategoryName");
+            return View(order);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Order(Order order, string btnSubmit, string userName)
+        public ActionResult Add(Order order, string btnSubmit, string userName)
         {
-            if (btnSubmit == "addRowAdd") 
+            if (btnSubmit == "addRow") 
             {
                 foreach (var modelValue in ModelState.Values)
                 {
                     modelValue.Errors.Clear();
                 }
-
+                
                 order.Items.Add(new Item());
-                ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x=>x.CategoryName), "Id", "CategoryName");
-                ViewBag.addOrUpdate = "Add";
-                ViewBag.Title = "Add Order";
+
+                ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName), "Id", "CategoryName");
+                ViewBag.BillingCategoryId = new SelectList(db.BillingCategories.OrderBy(x => x.BillingCategoryName), "Id", "BillingCategoryName");
                 return View(order);
-            }
-            else if (btnSubmit == "addRowEdit")
+            } 
+            else if (btnSubmit == "generatePO")
+            {
+                foreach (var modelValue in ModelState.Values)
+                {
+                    modelValue.Errors.Clear();
+                }
+                order.PoNumber = getNewPO();
+
+                ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName), "Id", "CategoryName");
+                ViewBag.BillingCategoryId = new SelectList(db.BillingCategories.OrderBy(x => x.BillingCategoryName), "Id", "BillingCategoryName");
+                return View(order);
+            } 
+            else
+            {
+                if (ModelState.IsValid)
+                {
+                    order.UserName = userName;
+                    db.Orders.Add(order);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName), "Id", "CategoryName");
+                    ViewBag.BillingCategoryId = new SelectList(db.BillingCategories.OrderBy(x => x.BillingCategoryName), "Id", "BillingCategoryName");
+                    return View(order);
+                }
+            }   
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Order order, string btnSubmit, string userName)
+        {
+            if (btnSubmit == "addRow")
             {
                 foreach (var modelValue in ModelState.Values)
                 {
@@ -84,93 +96,48 @@ namespace OrdersWeb.Controllers
                 }
 
                 order.Items.Add(new Item() { OrderId = order.Id });
+
                 ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName), "Id", "CategoryName");
-                ViewBag.addOrUpdate = "Edit";
-                ViewBag.Title = "Edit Order";
+                ViewBag.BillingCategoryId = new SelectList(db.BillingCategories.OrderBy(x => x.BillingCategoryName), "Id", "BillingCategoryName");
+                return View(order);
+            }
+            else if (btnSubmit == "generatePO")
+            {
+                foreach (var modelValue in ModelState.Values)
+                {
+                    modelValue.Errors.Clear();
+                }
+                order.PoNumber = getNewPO();
+
+                ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName), "Id", "CategoryName");
+                ViewBag.BillingCategoryId = new SelectList(db.BillingCategories.OrderBy(x => x.BillingCategoryName), "Id", "BillingCategoryName");
                 return View(order);
             }
             else
             {
-                if (btnSubmit == "Add")
+                if (ModelState.IsValid)
                 {
-                    if (ModelState.IsValid)
+                    db.Items.RemoveRange(db.Items.Where(m => m.OrderId == order.Id));
+                    db.SaveChanges();
+                    foreach (var tmp in order.Items)
                     {
-                        order.UserName = userName;
-                        db.Orders.Add(order);
+                        db.Items.Add(tmp);
                         db.SaveChanges();
-                        return RedirectToAction("Index");
                     }
-                    else
-                    {
-                        ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName), "Id", "CategoryName");
-                        ViewBag.Title = "Add Order";
-                        return View(order);
-                    }
-                    
-                }
-                else if (btnSubmit == "Edit")
-                {
-                    if (ModelState.IsValid)
-                    {
-                        db.Items.RemoveRange(db.Items.Where(m => m.OrderId == order.Id));
-                        db.SaveChanges();
-                        foreach (var tmp in order.Items)
-                        {
-                            db.Items.Add(tmp);
-                            db.SaveChanges();
-                        }
-                        db.Entry(order).State = EntityState.Modified;
-                        db.SaveChanges();
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName), "Id", "CategoryName");
-                        ViewBag.Title = "Add Order";
-                        return View(order);
-                    }
+                    order.UserName = userName;
+                    db.Entry(order).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
                 }
                 else
                 {
-                    return View();
+                    ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName), "Id", "CategoryName");
+                    ViewBag.BillingCategoryId = new SelectList(db.BillingCategories.OrderBy(x => x.BillingCategoryName), "Id", "BillingCategoryName");
+                    return View(order);
                 }
-            }   
-        }
-
-
-        
-        // GET: Order/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            //Order order = db.Orders.Include(i => i.Items).Where(i => i.Id == id).Single();
-           
-            //ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x=>x.CategoryName), "Id", "CategoryName");
-
-            return RedirectToAction("Order", new { id = id, addOrUpdate = "Edit" });
         }
 
-        // POST: Order/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit(Order order)
-        //{
-        //    db.Entry(order).State = EntityState.Modified;
-        //    db.SaveChanges();
-        //    foreach (var tmp in order.Items)
-        //    {
-        //        db.Entry(tmp).State = EntityState.Modified;
-        //        db.SaveChanges();
-        //    }
-
-        //    return RedirectToAction("Create");
-        //}
 
         // GET: Order/Delete/5
         public ActionResult Delete(int? id)
@@ -228,6 +195,21 @@ namespace OrdersWeb.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private string getNewPO()
+        {
+            string po = db.Orders.OrderByDescending(x => x.PoNumber).Where(x => x.PoNumber != null).Select(x => x.PoNumber).ToList().First();
+            int lastPO = Convert.ToInt32(po.Substring(po.Length - 3, 3));
+            if (DateTime.Now.Year.ToString() == po.Substring(po.Length - 7, 4))
+            {
+                po = "po" + po.Substring(po.Length - 7, 4) + (lastPO + 1).ToString("000");
+            }
+            else
+            {
+                po = "po" + DateTime.Now.Year.ToString() + "001";
+            }
+            return po;
         }
     }
 }

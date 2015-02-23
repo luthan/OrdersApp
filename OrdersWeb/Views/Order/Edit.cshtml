@@ -1,0 +1,93 @@
+﻿@model OrdersWeb.Models.Order
+
+@{
+    HtmlHelper.ClientValidationEnabled = false;
+}
+
+@using System.DirectoryServices.AccountManagement
+@{
+    var context = new PrincipalContext(ContextType.Domain);
+    var principal = UserPrincipal.FindByIdentity(context, User.Identity.Name);
+}
+<h2>Edit Order</h2>
+
+<hr />
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div width="1200px" class="clearfix">
+            <div class="clearfix">
+                <div class="form-group" style="float:left;margin-right:0px">
+                    @*@Html.LabelFor(model => model.OrderNumber, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                    <div class="col-md-11">
+                        @Html.EditorFor(model => model.OrderNumber, new { htmlAttributes = new { @class = "form-control",placeholder = "Order Number" } })
+                        @Html.ValidationMessageFor(model => model.OrderNumber, "", new { @class = "text-danger" })
+                        
+                    </div>
+                </div>
+
+                <div class="form-group" style="float:left;width:230px">
+                    <div>
+                        <div style="float:left">@Html.EditorFor(model => model.PoNumber, new { htmlAttributes = new { @class = "form-control", style = "width:150px", @Value = Model.PoNumber, @readonly = "readonly" } })</div>
+                        @if (Model.PoNumber == null) { 
+                            <div style="float:left"><button type="submit" name="btnSubmit" value="generatePO" class="btn btn-info">PO</button></div>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-group" style="float:left">
+                    @*@Html.LabelFor(model => model.OrderDate, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                    <div class="col-md-11">
+                        @Html.EditorFor(model => model.OrderDate, new { htmlAttributes = new { @class = "form-control", type="date"} })
+                        @Html.ValidationMessageFor(model => model.OrderDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group" style="float:left">
+                    @*@Html.LabelFor(model => model.Vendor, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                    <div class="col-md-11">
+                        @Html.EditorFor(model => model.Vendor, new { htmlAttributes = new { @class = "form-control",placeholder="Vendor"} })
+                        @Html.ValidationMessageFor(model => model.Vendor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <h4>Items</h4>
+            <div class="clearfix" style="margin-bottom:20px">
+                @Html.EditorFor(model => model.Items, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Items, "", new { @class = "text-danger" })
+                @*@Html.LabelFor(model => model.Items, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+            </div>*@
+            </div>
+
+            <div class="clearfix">
+                @*@Html.LabelFor(model => model.Notes, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                <div style="width:100%">
+                    @Html.TextAreaFor(model => model.Notes,  new { @class = "form-control textarea", placeholder="Notes", style="width:880px" } )
+                    @Html.ValidationMessageFor(model => model.Notes, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+
+            <div>
+                    <br />
+                    <button type="submit" name="btnSubmit" value="Submit" class="btn btn-success" style="float:left;margin-right:10px">Submit</button>
+                    <button type="submit" name="btnSubmit" value="addRow" class="btn btn-primary" style="float:left;margin-right:50px">Add Row</button>
+                    <input type="hidden" name="userName" value="@principal.GivenName @principal.Surname">
+            </div>
+        </div>
+    </div>
+}
+
+<div><br />
+    @Html.ActionLink("Back to List", "Index", null, new { @class="btn btn-info"})
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

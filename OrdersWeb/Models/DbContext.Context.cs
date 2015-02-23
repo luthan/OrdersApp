@@ -25,6 +25,7 @@ namespace OrdersWeb.Models
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<BillingCategory> BillingCategories { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Item> Items { get; set; }
         public virtual DbSet<Order> Orders { get; set; }

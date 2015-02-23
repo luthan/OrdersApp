@@ -16,7 +16,7 @@ namespace OrdersWeb.Models
     public partial class Item
     {
         public int Id { get; set; }
-        [Required(ErrorMessage="Required")]
+        [Required(ErrorMessage = "Required")]
         public string ItemDescription { get; set; }
         [Required(ErrorMessage = "Required")]
         public int Quantity { get; set; }
@@ -24,10 +24,10 @@ namespace OrdersWeb.Models
         public double Price { get; set; }
         [Required(ErrorMessage = "Required")]
         public int CategoryId { get; set; }
-        [Required(ErrorMessage = "Required")]
-        public string BillingCategory { get; set; }
+        public int BillingCategoryId { get; set; }
         public int OrderId { get; set; }
-
+    
+        public virtual BillingCategory BillingCategory { get; set; }
         public virtual Category Category { get; set; }
         public virtual Order Order { get; set; }
     }
