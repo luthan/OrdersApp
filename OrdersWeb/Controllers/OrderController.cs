@@ -211,5 +211,19 @@ namespace OrdersWeb.Controllers
             }
             return po;
         }
+
+        public ActionResult DashBoard()
+        {
+
+            double total = 0;
+            var year = DateTime.Now.Year;
+            var items = db.Items.Where(m => m.Order.OrderDate.Year == year && m.BillingCategory.BillingCategoryName.Contains("Hardware")).ToList();
+            //var items = db.Items.Where(m => m.BillingCategory.BillingCategoryName.Contains("/Hardware/") && m.Order.OrderDate.Year == year).ToList();
+            foreach (var item in items)
+            {
+                total += item.Quantity * item.Price;
+            }
+            return Content(total.ToString());
+        }
     }
 }
