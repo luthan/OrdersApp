@@ -8,6 +8,15 @@
 <hr />
 <p>
     @Html.ActionLink("Create New", "Add", null, new { @class = "btn btn-primary" })
+    <button class="btn btn-info productView showProducts">Show/Hide Products</button>
+    <span>@ViewBag.displayDate - Today</span>
+    <div class="row">
+        <div class="col-sm-12">
+            Select Date: <span><input type="text" id="earliestDate" class="form-control" /></span>
+        </div>
+        
+    </div>
+    
 </p>
 <table class="table">
     <tr>
@@ -35,7 +44,7 @@
 
     @foreach (var item in Model)
     {
-        <tr>
+        <tr style="background-color:Highlight">
             <td>
                 @Html.DisplayFor(modelItem => item.OrderDate)
             </td>
@@ -69,6 +78,21 @@
                 @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-danger btn-sm" })
             </td>
             
+            
+        </tr>
+        <tr class="products">
+            <td colspan="7">
+                <div>
+                    <table class="table products">
+                        @foreach(var product in item.Items)
+                        {
+                            <tr>
+                                <td>@product.Category.CategoryName</td><td>@product.BillingCategory.BillingCategoryName</td><td>@product.ItemDescription</td><td>@product.Quantity</td><td>@product.Price.ToString("C")</td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </td>
         </tr>
         @*foreach (var x in item.Items)
         {
@@ -91,3 +115,28 @@
     }
 
 </table>
+
+@section scripts{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#earliestDate").datepicker();
+            $(".products").hide();
+            $(".productView").click(function () {
+                if ($(this).hasClass("showProducts")) {
+                    $(".products").show();
+                    $(this).removeClass("showProducts").addClass("hideProducts");
+                } else {
+                    $(".products").hide();
+                    $(this).removeClass("hideProducts").addClass("showProducts");
+                }
+            });
+        });
+        $(document).on("change", "#earliestDate", function () {
+            window.location = "?earliestDate=" + $(this).val();
+        });
+    </script>
+    
+
+}

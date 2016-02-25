@@ -16,9 +16,24 @@ namespace OrdersWeb.Controllers
     {
         private OrderAppDatabaseContext db = new OrderAppDatabaseContext();
 
-        public ActionResult Index()
+        public ActionResult Index(string earliestDate)
         {
-            return View(db.Orders.OrderByDescending(m => m.OrderDate).ThenByDescending(m=>m.Id).ToList());
+            //earliestDate = Convert.ToDateTime(earliestDate);
+            if(earliestDate != null)
+            {
+                var x = Convert.ToDateTime(earliestDate);
+                //var x = DateTime.Today.AddMonths(-2);
+                ViewBag.displayDate = x.ToString("MM/dd/yyyy");
+                return View(db.Orders.Where(m => m.OrderDate > x).OrderByDescending(m => m.OrderDate).ThenByDescending(m => m.Id).ToList());
+            }
+            else
+            {
+                var x = DateTime.Today.AddMonths(-2);
+                ViewBag.displayDate = x.ToString("MM/dd/yyyy");
+                return View(db.Orders.Where(m => m.OrderDate > x).OrderByDescending(m => m.OrderDate).ThenByDescending(m => m.Id).ToList());
+            }
+            
+            
         }
 
         // GET: Order/Create
