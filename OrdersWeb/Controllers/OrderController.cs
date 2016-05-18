@@ -1,12 +1,11 @@
-﻿using System;
+﻿using OrdersWeb.Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using OrdersWeb.Models;
 //using System.DirectoryServices.AccountManagement;
 
 
@@ -19,7 +18,7 @@ namespace OrdersWeb.Controllers
         public ActionResult Index(string earliestDate)
         {
             //earliestDate = Convert.ToDateTime(earliestDate);
-            if(earliestDate != null)
+            if (earliestDate != null)
             {
                 var x = Convert.ToDateTime(earliestDate);
                 //var x = DateTime.Today.AddMonths(-2);
@@ -32,8 +31,8 @@ namespace OrdersWeb.Controllers
                 ViewBag.displayDate = x.ToString("MM/dd/yyyy");
                 return View(db.Orders.Where(m => m.OrderDate > x).OrderByDescending(m => m.OrderDate).ThenByDescending(m => m.Id).ToList());
             }
-            
-            
+
+
         }
 
         // GET: Order/Create
@@ -57,19 +56,19 @@ namespace OrdersWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Add(Order order, string btnSubmit, string userName)
         {
-            if (btnSubmit == "addRow") 
+            if (btnSubmit == "addRow")
             {
                 foreach (var modelValue in ModelState.Values)
                 {
                     modelValue.Errors.Clear();
                 }
-                
+
                 order.Items.Add(new Item());
 
                 ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName), "Id", "CategoryName");
                 ViewBag.BillingCategoryId = new SelectList(db.BillingCategories.OrderBy(x => x.BillingCategoryName), "Id", "BillingCategoryName");
                 return View(order);
-            } 
+            }
             else if (btnSubmit == "generatePO")
             {
                 foreach (var modelValue in ModelState.Values)
@@ -81,7 +80,7 @@ namespace OrdersWeb.Controllers
                 ViewBag.CategoryId = new SelectList(db.Categories.OrderBy(x => x.CategoryName), "Id", "CategoryName");
                 ViewBag.BillingCategoryId = new SelectList(db.BillingCategories.OrderBy(x => x.BillingCategoryName), "Id", "BillingCategoryName");
                 return View(order);
-            } 
+            }
             else
             {
                 if (ModelState.IsValid)
@@ -97,7 +96,7 @@ namespace OrdersWeb.Controllers
                     ViewBag.BillingCategoryId = new SelectList(db.BillingCategories.OrderBy(x => x.BillingCategoryName), "Id", "BillingCategoryName");
                     return View(order);
                 }
-            }   
+            }
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -172,7 +171,7 @@ namespace OrdersWeb.Controllers
         // POST: Order/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        
+
         public ActionResult DeleteConfirmed(int id)
         {
             Order order = db.Orders.Find(id);
@@ -202,7 +201,7 @@ namespace OrdersWeb.Controllers
             return View(order);
         }
 
-       
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -239,6 +238,12 @@ namespace OrdersWeb.Controllers
                 total += item.Quantity * item.Price;
             }
             return Content(total.ToString());
+        }
+
+        public void Seen(int Id)
+        {
+            db.Orders.Single(m => m.Id == Id).Seen = true;
+            db.SaveChanges();
         }
     }
 }

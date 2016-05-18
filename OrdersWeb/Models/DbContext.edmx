@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="OrderAppDatabaseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2005" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="OrderAppDatabaseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2005" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="BillingCategory">
           <Key>
             <PropertyRef Name="Id" />
@@ -42,6 +42,7 @@
           <Property Name="Vendor" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Notes" Type="text" Nullable="false" />
           <Property Name="UserName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Seen" Type="bit" Nullable="false" />
         </EntityType>
         <Association Name="FK_Item_BillingCategory">
           <End Role="BillingCategory" Type="Self.BillingCategory" Multiplicity="1" />
@@ -97,8 +98,7 @@
             <End Role="Item" EntitySet="Item" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="OrderAppDatabaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -140,11 +140,12 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="OrderNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="PoNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="OrderDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="OrderDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Vendor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Items" Relationship="Self.FK_Item_Order" FromRole="Order" ToRole="Item" />
+          <Property Name="Seen" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK_Item_BillingCategory">
           <End Role="BillingCategory" Type="Self.BillingCategory" Multiplicity="1" />
@@ -238,6 +239,7 @@
           <EntitySetMapping Name="Orders">
             <EntityTypeMapping TypeName="OrderAppDatabaseModel.Order">
               <MappingFragment StoreEntitySet="Order">
+                <ScalarProperty Name="Seen" ColumnName="Seen" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
                 <ScalarProperty Name="PoNumber" ColumnName="PoNumber" />

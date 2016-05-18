@@ -11,7 +11,6 @@ namespace OrdersWeb.Models
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
     
     public partial class Order
     {
@@ -23,14 +22,11 @@ namespace OrdersWeb.Models
         public int Id { get; set; }
         public string OrderNumber { get; set; }
         public string PoNumber { get; set; }
-        [Required(ErrorMessage = "Required")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public System.DateTime OrderDate { get; set; }
-        [Required(ErrorMessage = "Required")]
         public string Vendor { get; set; }
-        [Required(ErrorMessage = "Required")]
         public string Notes { get; set; }
         public string UserName { get; set; }
+        public bool Seen { get; set; }
     
         public virtual ICollection<Item> Items { get; set; }
     }
